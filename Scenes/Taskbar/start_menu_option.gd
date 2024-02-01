@@ -5,6 +5,7 @@ extends Panel
 @export var game_scene: String
 @export var title_text: String
 @export var description_text: String
+@export var use_generic_pause_menu: bool
 
 var is_mouse_over: bool
 
@@ -39,10 +40,14 @@ func spawn_window() -> void:
 	window = load("res://Scenes/Window/Game Window/game_window.tscn").instantiate()
 	window.get_node("%Game Window").add_child(load(game_scene).instantiate())
 	
+	if use_generic_pause_menu:
+		window.get_node("%GamePauseManager").process_mode = Node.PROCESS_MODE_INHERIT
+	
 	window.title_text = %"Menu Title".text
 	get_tree().current_scene.add_child(window)
 	
 	var taskbar_button: Control = load("res://Scenes/Taskbar/taskbar_button.tscn").instantiate()
 	taskbar_button.target_window = window
-	taskbar_button.active_color = Color.MEDIUM_VIOLET_RED
+	taskbar_button.get_node("TextureMargin/TextureRect").texture = $"HBoxContainer/MarginContainer/TextureRect".texture
+	taskbar_button.active_color = $"HBoxContainer/MarginContainer/TextureRect".modulate
 	get_tree().get_first_node_in_group("taskbar_buttons").add_child(taskbar_button)
